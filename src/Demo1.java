@@ -10,54 +10,48 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import Template.SystemTemplate;
-
 public class Demo1 {
 
-	//static Integer number = new Integer(0);
 	public static void main(String[] args) throws DocumentException {
 		// TODO Auto-generated method stub
-		
 		SAXReader reader = new SAXReader();
 		File file = new File("pac1.aaxl2");		
 		Document document = reader.read(file);		
 		Element root = document.getRootElement();
-		Num number = new Num();
-		ShowElement(root, number);
+		root = root.element("ownedPublicSection");
+		List<Element> childElements = root.elements();
 		
-		
-		
-	}
-
-	public static void ShowElement(Element node,Num number){
-		Element root = node;
-		number.number++;
-		System.out.println("元素 "+ number.number +" 属性值：");
-		List<Attribute> attributesList = root.attributes();     //返回当前元素的属性
-		for(Attribute attr : attributesList){
-			if(attr.getName().equals("type") && attr.getValue().equals("aadl2:SystemType")){
-				for(Attribute attrTemp : attributesList){
-					if(attrTemp.getName().equals("name")){
-						String systemName = attrTemp.getValue();
-						SystemTemplate.systemToCH(systemName);
-						SystemTemplate.systemToC(systemName);
-						
+		for(Element child:childElements){
+			List<Attribute> attributeList = child.attributes();
+			for(Attribute attr : attributeList){
+				if(attr.getName().equals("type") && attr.getValue().equals("aadl2:ProcessType")){
+					List<Attribute> attrtempList = child.attributes();
+					for(Attribute attrtemp : attrtempList){
+					System.out.println(attrtemp.getName() + ": " + attrtemp.getValue());
+					}
+					List<Element> elementList = child.elements();
+					for(Element ele : elementList){
+						System.out.println(ele.getName() + ": " + ele.getText());
 					}
 				}
 				
-			}
-			
+			}			
 		}
-		System.out.println("元素 "+ number.number+ " 内容：" + root.getText());
-		System.out.println();
+		
+	}
+
+	public static void ShowElement(Element node,int count){
+		Element root = node;
+		int number = count+1;
+		System.out.println("元素 "+ number +" 属性值：");
+		List<Attribute> attributesList = root.attributes();     //返回当前元素的属性
+		for(Attribute attr : attributesList){
+			System.out.println(attr.getName() + ": " + attr.getValue());
+		}
 		List<Element> childElement = root.elements();
 		for(Element ele : childElement){
-			ShowElement(ele,number);
+			ShowElement(ele, number);
 		}
 	}
 
-}
-
-class Num{
-	public int number=0;
 }
